@@ -16,7 +16,8 @@ public class GameObjectVisibilityManager : MonoBehaviour
 
     void ToggleSystemsVisibility()
     {
-        areSystemsVisible = !areSystemsVisible;
+        //areSystemsVisible = !areSystemsVisible;
+        areSystemsVisible = false;
         SetSystemsVisibility(areSystemsVisible);
     }
 

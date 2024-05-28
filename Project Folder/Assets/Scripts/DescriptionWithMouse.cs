@@ -25,6 +25,8 @@ public class DescriptionWithMouse : MonoBehaviour
     private Vector2 descriptionPanelOriginalPos;
 
     private string clickedObjectTag; // To store the tag of the clicked object
+    private GameObject highlightedObject; // To store the currently highlighted object
+    private Color originalColor; // To store the original color of the clicked object
 
     void Start()
     {
@@ -79,7 +81,7 @@ public class DescriptionWithMouse : MonoBehaviour
                     hit.transform.tag == "CNS" ||
                     hit.transform.tag == "PNS")
                 {
-                    ShowInfo(hit.transform.name, hit.transform.tag);
+                    ShowInfo(hit.transform.name, hit.transform.tag, hit.transform.gameObject);
                 }
                 else
                 {
@@ -96,16 +98,37 @@ public class DescriptionWithMouse : MonoBehaviour
         }
     }
 
-    private void ShowInfo(string organName, string tag)
+    private void ShowInfo(string organName, string tag, GameObject clickedObject)
     {
         UnityEngine.Debug.Log($"Hit on {organName}");
+
+        // Reset the color of the previously highlighted object
+        if (highlightedObject != null)
+        {
+            Renderer renderer = highlightedObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = originalColor;
+            }
+        }
+
+        // Store the original color of the clicked object
+        Renderer clickedRenderer = clickedObject.GetComponent<Renderer>();
+        if (clickedRenderer != null)
+        {
+            originalColor = clickedRenderer.material.color;
+            // Change the color to highlight it
+            clickedRenderer.material.color = Color.yellow;
+        }
+
+        highlightedObject = clickedObject; // Store the clicked object
 
         clickedObjectTag = tag; // Store the tag of the clicked object
 
         // Clean the organ name before displaying it
         string cleanedName = CleanName(organName);
 
-        objectNameTMP.text = $"Clicked on: {cleanedName}";
+        objectNameTMP.text = $"{cleanedName}";
         objectNameTMP.gameObject.SetActive(true);
         closeButton.gameObject.SetActive(true);
         moreInfoButton.gameObject.SetActive(true);
@@ -127,6 +150,17 @@ public class DescriptionWithMouse : MonoBehaviour
         descriptionTMP.gameObject.SetActive(false);
         closeButton.gameObject.SetActive(false);
         moreInfoButton.gameObject.SetActive(false);
+
+        // Reset the color of the highlighted object
+        if (highlightedObject != null)
+        {
+            Renderer renderer = highlightedObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = originalColor;
+            }
+            highlightedObject = null;
+        }
 
         // Hide titleInfoButtonBar
         StartCoroutine(SmoothMove(titleInfoButtonBarRect, new Vector2(titleInfoButtonBarOriginalPos.x, -Screen.height), 0.3f));
@@ -180,6 +214,17 @@ public class DescriptionWithMouse : MonoBehaviour
         descriptionTMP.gameObject.SetActive(false);
         closeButton.gameObject.SetActive(false);
         moreInfoButton.gameObject.SetActive(false);
+
+        // Reset the color of the highlighted object
+        if (highlightedObject != null)
+        {
+            Renderer renderer = highlightedObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = originalColor;
+            }
+            highlightedObject = null;
+        }
 
         // Hide titleInfoButtonBar
         StartCoroutine(SmoothMove(titleInfoButtonBarRect, new Vector2(titleInfoButtonBarOriginalPos.x, -Screen.height), 0.3f));
