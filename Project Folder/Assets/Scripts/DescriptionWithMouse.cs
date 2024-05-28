@@ -68,29 +68,29 @@ public class DescriptionWithMouse : MonoBehaviour
                 UnityEngine.Debug.Log("Hit: " + hit.transform.name + " : " + hit.transform.tag);
 
                 // Update the TMP Text with the name of the hit object
-                if (hit.transform.tag == "Lungs")
+                if (hit.transform.tag == "RespiratorySystem")
                 {
-                    ShowInfo("Lungs");
+                    ShowInfo("RespiratorySystem");
                 }
                 else if (hit.transform.tag == "Liver")
                 {
                     ShowInfo("Liver");
                 }
-                else if (hit.transform.tag == "Urinary System")
+                else if (hit.transform.tag == "UrinarySystem")
                 {
-                    ShowInfo("Urinary System");
+                    ShowInfo("UrinarySystem");
                 }
-                else if (hit.transform.tag == "Colon")
+                else if (hit.transform.tag == "DigestiveSystem")
                 {
-                    ShowInfo("Colon");
+                    ShowInfo("DigestiveSystem");
                 }
-                else if (hit.transform.tag == "Gingiva")
+                else if (hit.transform.tag == "EndocrineGlands")
                 {
-                    ShowInfo("Gingiva");
+                    ShowInfo("EndocrineGlands");
                 }
-                else if (hit.transform.tag == "Reproductive System")
+                else if (hit.transform.tag == "GenitalSystem")
                 {
-                    ShowInfo("Reproductive System");
+                    ShowInfo("GenitalSystem");
                 }
                 else
                 {
