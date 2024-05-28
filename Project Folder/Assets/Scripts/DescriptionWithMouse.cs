@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Diagnostics;
+using System.Text.RegularExpressions; // Needed for Regex
 
 public class DescriptionWithMouse : MonoBehaviour
 {
@@ -23,6 +23,8 @@ public class DescriptionWithMouse : MonoBehaviour
     private Vector2 hideShowBarOriginalPos;
     private Vector2 titleInfoButtonBarOriginalPos;
     private Vector2 descriptionPanelOriginalPos;
+
+    private string clickedObjectTag; // To store the tag of the clicked object
 
     void Start()
     {
@@ -68,29 +70,16 @@ public class DescriptionWithMouse : MonoBehaviour
                 UnityEngine.Debug.Log("Hit: " + hit.transform.name + " : " + hit.transform.tag);
 
                 // Update the TMP Text with the name of the hit object
-                if (hit.transform.tag == "RespiratorySystem")
+                if (hit.transform.tag == "RespiratorySystem" ||
+                    hit.transform.tag == "Liver" ||
+                    hit.transform.tag == "UrinarySystem" ||
+                    hit.transform.tag == "DigestiveSystem" ||
+                    hit.transform.tag == "EndocrineGlands" ||
+                    hit.transform.tag == "GenitalSystem" ||
+                    hit.transform.tag == "CNS" ||
+                    hit.transform.tag == "PNS")
                 {
-                    ShowInfo("RespiratorySystem");
-                }
-                else if (hit.transform.tag == "Liver")
-                {
-                    ShowInfo("Liver");
-                }
-                else if (hit.transform.tag == "UrinarySystem")
-                {
-                    ShowInfo("UrinarySystem");
-                }
-                else if (hit.transform.tag == "DigestiveSystem")
-                {
-                    ShowInfo("DigestiveSystem");
-                }
-                else if (hit.transform.tag == "EndocrineGlands")
-                {
-                    ShowInfo("EndocrineGlands");
-                }
-                else if (hit.transform.tag == "GenitalSystem")
-                {
-                    ShowInfo("GenitalSystem");
+                    ShowInfo(hit.transform.name, hit.transform.tag);
                 }
                 else
                 {
@@ -107,18 +96,23 @@ public class DescriptionWithMouse : MonoBehaviour
         }
     }
 
-    private void ShowInfo(string organName)
+    private void ShowInfo(string organName, string tag)
     {
         UnityEngine.Debug.Log($"Hit on {organName}");
 
-        objectNameTMP.text = $"Clicked on: {organName}";
+        clickedObjectTag = tag; // Store the tag of the clicked object
+
+        // Clean the organ name before displaying it
+        string cleanedName = CleanName(organName);
+
+        objectNameTMP.text = $"Clicked on: {cleanedName}";
         objectNameTMP.gameObject.SetActive(true);
         closeButton.gameObject.SetActive(true);
         moreInfoButton.gameObject.SetActive(true);
         descriptionTMP.gameObject.SetActive(false); // Hide description initially
 
         // Show and animate the titleInfoButtonBar
-        StartCoroutine(SmoothMove(titleInfoButtonBarRect, new Vector2(hideShowBarOriginalPos.x, hideShowBarOriginalPos.y - descriptionPanelRect.rect.height ), 0.3f));
+        StartCoroutine(SmoothMove(titleInfoButtonBarRect, new Vector2(hideShowBarOriginalPos.x, hideShowBarOriginalPos.y - descriptionPanelRect.rect.height), 0.3f));
 
         // Hide descriptionPanel
         StartCoroutine(SmoothMove(descriptionPanelRect, new Vector2(descriptionPanelOriginalPos.x, -Screen.height), 0.3f));
@@ -146,8 +140,7 @@ public class DescriptionWithMouse : MonoBehaviour
     // Method to show more information from the file
     public void ShowMoreInfo()
     {
-        string organName = objectNameTMP.text.Replace("Clicked on: ", "");
-        string description = ReadDescriptionFromFile(organName + "Description");
+        string description = ReadDescriptionFromFile(clickedObjectTag + "Description");
 
         descriptionTMP.text = description;
 
@@ -160,9 +153,6 @@ public class DescriptionWithMouse : MonoBehaviour
         StartCoroutine(SmoothMove(titleInfoButtonBarRect, new Vector2(titleInfoButtonBarOriginalPos.x, titleInfoButtonBarOriginalPos.y), 0.3f));
 
         StartCoroutine(SmoothMove(descriptionPanelRect, new Vector2(descriptionPanelOriginalPos.x, descriptionPanelOriginalPos.y), 0.3f));
-
-        // Move the titleInfoButtonBar up to make space
-        //StartCoroutine(SmoothMove(titleInfoButtonBarRect, new Vector2(titleInfoButtonBarOriginalPos.x, titleInfoButtonBarOriginalPos.y + titleInfoButtonBarRect.rect.height), 0.5f));
 
         UnityEngine.Debug.Log("Displayed more info.");
     }
@@ -198,6 +188,18 @@ public class DescriptionWithMouse : MonoBehaviour
         StartCoroutine(SmoothMove(descriptionPanelRect, new Vector2(descriptionPanelOriginalPos.x, -Screen.height), 0.3f));
 
         UnityEngine.Debug.Log("Cleared all texts and buttons.");
+    }
+
+    // Method to clean the name by removing numbers, special characters (except underscores), "grp", and replacing underscores with spaces
+    private string CleanName(string name)
+    {
+        // Remove "grp" substring
+        string cleanedName = name.Replace("grp", "");
+        // Remove numbers and special characters except underscores
+        cleanedName = Regex.Replace(cleanedName, "[^a-zA-Z_]", "");
+        // Replace underscores with spaces
+        cleanedName = cleanedName.Replace("_", " ");
+        return cleanedName;
     }
 
     // Coroutine to smoothly move a RectTransform to a target position

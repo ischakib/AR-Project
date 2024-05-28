@@ -10,6 +10,11 @@ TagManager:
   - EndocrineGlands
   - UrinarySystem
   - DigestiveSystem
+  - Lungs
+  - NeurologySystem
+  - CNS
+  - PNS
+  - RespiratorySystem
   layers:
   - Default
   - TransparentFX

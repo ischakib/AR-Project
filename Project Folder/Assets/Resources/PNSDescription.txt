@@ -1,0 +1,3 @@
+The PNS (The peripheral nervous systems) is a vast network of spinal and cranial nerves that are linked to the brain and the spinal cord. It contains sensory receptors which help in processing changes in the internal and external environment. This information is sent to the CNS via afferent sensory nerves. The PNS is then subdivided into the autonomic nervous system and the somatic nervous system.
+- Nerve
+- Ganglion
